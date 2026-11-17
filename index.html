@@ -66,6 +66,8 @@ a{color:var(--cyan);text-decoration:none} a:hover{text-decoration:underline}
 
 main{flex:1;padding:28px 20px 48px;display:flex;flex-direction:column}
 .view{display:none} .view.active{display:flex;flex-direction:column;gap:18px;width:100%;max-width:920px;margin:0 auto}
+#v-home.active{display:grid;grid-template-columns:1.35fr .9fr;gap:16px;max-width:1100px;align-items:start}
+#v-home .span2{grid-column:1 / -1}
 .panel{background:var(--panel);border:1px solid var(--line);display:flex;flex-direction:column;min-width:0}
 .ph{display:flex;align-items:center;gap:10px;background:#111;border-bottom:1px solid var(--line);padding:8px 16px;font-size:13px}
 .ph .code{background:var(--amber);color:#000;font-weight:700;padding:1px 6px}
@@ -73,21 +75,34 @@ main{flex:1;padding:28px 20px 48px;display:flex;flex-direction:column}
 .ph .r{margin-left:auto;color:var(--dim);font-size:12px}
 .pb{padding:20px 22px}
 
-.intro h1{font-size:40px;line-height:1.15;font-weight:700;letter-spacing:.3px}
-.pitch{font-size:20px;color:#fff;margin-top:12px}
-.school{color:var(--dim);margin-top:10px;max-width:40em}
-.now{margin-top:18px;padding-top:14px;border-top:1px solid #222}
+.eqhead{display:flex;justify-content:space-between;align-items:flex-end;gap:16px}
+.sym{font-size:20px;font-weight:700;letter-spacing:.4px}
+.sym small{color:var(--amber);font-size:13px;font-weight:600;margin-left:6px}
+.who{font-size:28px;font-weight:700;line-height:1.15;margin-top:2px}
+.px{font-size:34px;font-weight:700;color:var(--green);text-align:right;line-height:1}
+.chg{font-size:14px;font-weight:600;text-align:right;margin-top:4px}
+.qgrid{display:grid;grid-template-columns:repeat(4,1fr);margin:16px 0 4px;border-top:1px solid #222;border-bottom:1px solid #222}
+.qgrid div{padding:8px 10px;border-right:1px solid #1c1c1c}
+.qgrid div:last-child{border-right:none}
+.qgrid .k{display:block;color:var(--dim);font-size:11px;letter-spacing:.5px}
+.qgrid .v{color:#fff;font-weight:600;font-size:13px}
+.pitch{font-size:17px;color:#fff;margin-top:14px}
+.now{margin-top:12px;color:#d4d4d4}
 .now b{color:var(--amber);margin-right:8px}
-
-.plist{display:flex;flex-direction:column}
-.prow{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;padding:16px 4px;border-bottom:1px solid #1c1c1c;cursor:pointer;background:none;border-left:none;border-right:none;border-top:none;width:100%;text-align:left;color:inherit;font:inherit}
-.prow:last-child{border-bottom:none}
-.prow:hover{background:var(--sel)}
-.pname{color:#fff;font-weight:700;font-size:17px}
-.pblurb{color:var(--dim);margin-top:2px}
-.presult{color:var(--amber);text-align:right;font-size:14px}
+.chartwrap{position:relative;height:248px;margin:10px 12px 12px}
+#chart{width:100%;height:100%;display:block}
 .home-links{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
 .home-links a{font-size:16px}
+.pill.green{color:var(--green);border-color:var(--green)}
+.pill.yellow{color:var(--yellow);border-color:var(--yellow)}
+.pill.cyan{color:var(--cyan);border-color:var(--cyan)}
+#homeproj{font-size:13px}
+#homeproj td,#homeproj th{padding:7px 6px}
+.skillrow{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px solid #161616;font-size:14px}
+.skillrow:last-child{border-bottom:none}
+.pip{font-weight:700}
+.pip.lang{color:var(--green)}
+.pip.tech{color:var(--cyan)}
 
 table{width:100%;border-collapse:collapse;font-size:14px}
 th{color:var(--amber);text-align:left;font-weight:600;padding:8px 8px;border-bottom:1px solid #333;font-size:12px;letter-spacing:.4px}
@@ -114,19 +129,23 @@ tbody tr:hover td{background:var(--sel)}
 .skills p{margin:0 0 4px}
 .status{display:flex;gap:16px;align-items:center;background:#0c0c0c;border-top:1px solid var(--line);padding:8px 16px;font-size:12px;flex-wrap:wrap}
 .status .seg{color:var(--dim)} .status .seg b{color:#fff;font-weight:600}
+.status .live{color:var(--green)}
 .status .clock{margin-left:auto;color:var(--amber);font-weight:700}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:6px}
 @media (max-width:800px){
-  .two{grid-template-columns:1fr}
+  #v-home.active,.two{grid-template-columns:1fr}
   .cmdrow .hint{display:none}
-  .intro h1{font-size:32px}
-  .pitch{font-size:18px}
+  .who{font-size:26px}
+  .px{font-size:28px}
+  .qgrid{grid-template-columns:1fr 1fr}
+  .qgrid div:nth-child(2){border-right:none}
+  .chartwrap{height:200px}
   main{padding:16px 12px 36px}
   .pb{padding:16px}
-  .prow{grid-template-columns:1fr;gap:4px}
-  .presult{text-align:left}
   .fkeys{padding:8px 10px}
   .fkeys .brand{margin-left:0}
   td,th{white-space:normal}
+  .scrollx{overflow-x:auto}
 }
 </style>
 </head>
@@ -165,22 +184,47 @@ tbody tr:hover td{background:var(--sel)}
 <main>
 <section class="view active" id="v-home">
   <div class="panel">
-    <div class="ph"><span class="code">HOME</span><span class="title">Profile</span><span class="r">CFM '29</span></div>
-    <div class="pb intro">
-      <h1>Prithvi Shah</h1>
+    <div class="ph"><span class="code">1</span><span class="title">PSHAH US Equity</span><span class="r">ILLUSTRATIVE</span></div>
+    <div class="pb">
+      <div class="eqhead">
+        <div>
+          <div class="sym">PSHAH <small>US Equity</small></div>
+          <div class="who">Prithvi Shah</div>
+        </div>
+        <div>
+          <div class="px" id="px">138.66</div>
+          <div class="chg dim" id="chg">—</div>
+        </div>
+      </div>
+      <div class="qgrid">
+        <div><span class="k">GRAD</span><span class="v">APR 2029</span></div>
+        <div><span class="k">FOCUS</span><span class="v">SWE / ML</span></div>
+        <div><span class="k">LATEST</span><span class="v">SIDEKICK YC S26</span></div>
+        <div><span class="k">PAPER</span><span class="v" id="stat-paper">—</span></div>
+      </div>
       <p class="pitch">Software and machine learning, built around markets.</p>
-      <p class="school">University of Waterloo · Computing and Financial Management, Honours Co-op · expected April 2029</p>
-      <p class="now"><b>NOW</b>Selected for the Sidekick (YC S26) intern program, November 2026.</p>
+      <p class="now"><b>NOW</b>Selected for the Sidekick (YC S26) intern program, November 2026. University of Waterloo, Computing and Financial Management, Honours Co-op.</p>
     </div>
   </div>
   <div class="panel">
-    <div class="ph"><span class="code">PROJ</span><span class="title">Projects</span><span class="r">Select a row for detail</span></div>
-    <div class="pb" style="padding-top:8px;padding-bottom:8px">
-      <div class="plist" id="plist"></div>
-    </div>
+    <div class="ph"><span class="code">2</span><span class="title">GP · Price Graph</span><span class="r">DRAWN ONCE · NOT A SECURITY</span></div>
+    <div class="chartwrap"><canvas id="chart"></canvas></div>
   </div>
   <div class="panel">
-    <div class="ph"><span class="code">MSG</span><span class="title">Contact</span></div>
+    <div class="ph"><span class="code">3</span><span class="title">PROJ · Portfolio Holdings</span><span class="r">Select a row</span></div>
+    <div class="pb scrollx" style="padding-top:8px;padding-bottom:8px">
+      <table id="homeproj">
+        <thead><tr><th>PROJECT</th><th>SECTOR</th><th>STACK</th><th>RESULT</th><th>STATUS</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="panel" id="skill-panel">
+    <div class="ph"><span class="code">4</span><span class="title">SKLL · Watchlist</span><span class="r">STATIC</span></div>
+    <div class="pb" id="watch" style="padding-top:10px;padding-bottom:10px"></div>
+  </div>
+  <div class="panel span2">
+    <div class="ph"><span class="code">5</span><span class="title">MSG · Contact</span></div>
     <div class="pb">
       <div class="home-links">
         <a href="mailto:prithvi.shah@uwaterloo.ca">prithvi.shah@uwaterloo.ca</a>
@@ -264,7 +308,7 @@ tbody tr:hover td{background:var(--sel)}
         </div>
       </div>
     </div>
-    <div class="panel" id="skill-panel">
+    <div class="panel" id="resume-skills">
       <div class="ph"><span class="code">SKLL</span><span class="title">Skills</span><span class="r">RESUME</span></div>
       <div class="pb skills">
         <div class="sec">LANGUAGES</div>
@@ -328,12 +372,12 @@ tbody tr:hover td{background:var(--sel)}
       <table class="cmdlist">
         <thead><tr><th>COMMAND</th><th>FUNCTION</th><th>KEY</th></tr></thead>
         <tbody>
-          <tr><td>HOME</td><td>Intro, projects, and contact</td><td>F2</td></tr>
+          <tr><td>HOME</td><td>Quote, chart, holdings, and skills</td><td>F2</td></tr>
           <tr><td>PROJ</td><td>Project list and writeups</td><td>F3</td></tr>
           <tr><td>RSRCH</td><td>Chronic kidney disease research and the paper</td><td>F9 · also RESEARCH</td></tr>
           <tr><td>RESUME</td><td>Education, experience, skills</td><td>F4 · also DES, CV</td></tr>
           <tr><td>ABOUT</td><td>Bio and key data</td><td>F5 · also BIO</td></tr>
-          <tr><td>SKLL</td><td>Skills list on the resume screen</td><td>F6</td></tr>
+          <tr><td>SKLL</td><td>Skills watchlist on the home screen</td><td>F6</td></tr>
           <tr><td>CONTACT</td><td>Email, LinkedIn, GitHub, resume</td><td>F7 · also MSG</td></tr>
           <tr><td>HIRE</td><td>Opens an email</td><td>F8</td></tr>
           <tr><td>CLEAR</td><td>Back to home</td><td>ESC</td></tr>
@@ -347,6 +391,7 @@ tbody tr:hover td{background:var(--sel)}
 </main>
 
 <footer class="status">
+  <span class="seg"><span class="dot"></span><span class="live">CONNECTED</span></span>
   <span class="seg">SCREEN <b id="scr">HOME</b></span>
   <span class="seg">SCHOOL <b class="green">WATERLOO CFM '29</b></span>
   <span class="seg">© Prithvi Shah</span>
@@ -438,6 +483,7 @@ function paperLink(){
 
 function fillPublication(){
   document.getElementById('resume-journal').textContent=JOURNAL;
+  document.getElementById('stat-paper').textContent=JOURNAL.replace(' in ',' ').toUpperCase();
   document.getElementById('rsrch-journal-head').textContent=JOURNAL;
   document.getElementById('about-research').textContent='Student Researcher · Jan 2024 – Jun 2024 · '+JOURNAL;
   const aboutPaper=document.getElementById('about-paper');
@@ -481,19 +527,31 @@ function fillPublication(){
 
 document.getElementById('track').innerHTML=[...headlines,...headlines].map(([t,h])=>`<span class="item"><span class="t">${t}</span>${h}</span>`).join('');
 
-const plist=document.getElementById('plist');
-projects.forEach((p,i)=>{
-  const row=document.createElement('button');
-  row.type='button'; row.className='prow'; row.dataset.i=i;
-  const left=document.createElement('div');
-  const name=document.createElement('div'); name.className='pname'; name.textContent=p.name;
-  const blurb=document.createElement('div'); blurb.className='pblurb'; blurb.textContent=p.blurb;
-  left.appendChild(name); left.appendChild(blurb);
-  const result=document.createElement('div'); result.className='presult'; result.textContent=p.result;
-  row.appendChild(left); row.appendChild(result);
-  row.addEventListener('click',()=>{ show('proj'); showProj(i); });
-  plist.appendChild(row);
+const pillFor={OSS:'green',DEMO:'yellow',RESEARCH:'cyan'};
+const homeBody=document.querySelector('#homeproj tbody');
+homeBody.innerHTML=projects.map((p,i)=>
+  `<tr data-i="${i}" style="cursor:pointer"><td><div class="tkr">${p.name}</div><div class="dim">${p.blurb}</div></td>
+  <td>${p.sector}</td><td class="cyan">${p.stack}</td><td>${p.result}</td>
+  <td><span class="pill ${pillFor[p.status]||''}">${p.status}</span></td></tr>`).join('');
+homeBody.addEventListener('click',e=>{
+  const r=e.target.closest('tr'); if(!r||r.dataset.i==null) return;
+  show('proj'); showProj(+r.dataset.i);
 });
+const watch=document.getElementById('watch');
+[
+  ['PY','Python'],['CPP','C++'],['JAVA','Java'],['JS','JavaScript'],['TS','TypeScript'],
+  ['C','C'],['GO','Go'],['SQL','SQL'],['RST','Rust']
+].forEach(([t,n])=>{
+  const row=document.createElement('div'); row.className='skillrow';
+  row.innerHTML=`<span><span class="pip lang">${t}</span> ${n}</span>`;
+  watch.appendChild(row);
+});
+const tech=document.createElement('p');
+tech.className='dim';
+tech.style.marginTop='10px';
+tech.style.fontSize='13px';
+tech.textContent='Also React, Next.js, Node.js, FastAPI, PostgreSQL, AWS, Docker, Linux, Git, CI/CD.';
+watch.appendChild(tech);
 
 const pf=document.querySelector('#projfull tbody');
 pf.innerHTML=projects.map((p,i)=>
@@ -529,6 +587,77 @@ pf.addEventListener('click',e=>{
 });
 showProj(0);
 
+const cv=document.getElementById('chart'), ctx=cv.getContext('2d');
+let series=[];
+{let v=96; for(let i=0;i<160;i++){v+=(Math.random()-0.42)*1.35+(i>120?0.22:0); if(i===128) v+=7; series.push(v);} }
+const sidekickAt=128;
+function drawChart(){
+  if(!document.getElementById('v-home').classList.contains('active')) return;
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+  if(W<20||H<20) return;
+  cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,W,H);
+  const padL=8,padR=46,padT=16,padB=8, cw=W-padL-padR, ch=H-padT-padB;
+  const min=Math.min(...series)-2, max=Math.max(...series)+2;
+  const X=i=>padL+i/(series.length-1)*cw, Y=val=>padT+(1-(val-min)/(max-min))*ch;
+  ctx.strokeStyle='#1c1c1c'; ctx.lineWidth=1; ctx.font='11px IBM Plex Mono, monospace'; ctx.fillStyle='#777';
+  for(let g=0;g<=4;g++){const y=padT+g/4*ch; ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+cw,y); ctx.stroke();
+    ctx.fillText((max-g/4*(max-min)).toFixed(1), padL+cw+6, y+3);}
+  const grad=ctx.createLinearGradient(0,padT,0,padT+ch);
+  grad.addColorStop(0,'rgba(251,139,30,.28)'); grad.addColorStop(1,'rgba(251,139,30,0)');
+  ctx.beginPath(); ctx.moveTo(X(0),Y(series[0])); series.forEach((val,i)=>ctx.lineTo(X(i),Y(val)));
+  ctx.lineTo(X(series.length-1),padT+ch); ctx.lineTo(X(0),padT+ch); ctx.closePath(); ctx.fillStyle=grad; ctx.fill();
+  ctx.beginPath(); series.forEach((val,i)=>i?ctx.lineTo(X(i),Y(val)):ctx.moveTo(X(i),Y(val)));
+  ctx.strokeStyle='#FB8B1E'; ctx.lineWidth=1.6; ctx.stroke();
+  const x=X(sidekickAt), y=Y(series[sidekickAt]);
+  ctx.strokeStyle='#29d35b'; ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+ch); ctx.stroke();
+  ctx.fillStyle='#29d35b'; ctx.fillRect(Math.min(x-54, padL+cw-112), padT+2, 112, 15);
+  ctx.fillStyle='#000'; ctx.font='bold 10px IBM Plex Mono, monospace'; ctx.fillText('▲ SIDEKICK', Math.min(x-50, padL+cw-108), padT+13);
+  const last=series[series.length-1], ly=Y(last);
+  ctx.fillStyle='#FB8B1E'; ctx.fillRect(padL+cw+1, ly-8, padR-4, 16);
+  ctx.fillStyle='#000'; ctx.font='bold 11px IBM Plex Mono, monospace'; ctx.fillText(last.toFixed(1), padL+cw+4, ly+3);
+}
+function scheduleChart(){
+  let n=0;
+  const step=()=>{
+    if(!document.getElementById('v-home').classList.contains('active')) return;
+    if((cv.clientWidth<20||cv.clientHeight<20)&&n++<40){requestAnimationFrame(step); return;}
+    drawChart();
+  };
+  requestAnimationFrame(step);
+}
+window.addEventListener('resize',drawChart);
+document.fonts?.ready.then(scheduleChart);
+scheduleChart();
+
+const quoteOpen=138.66, quoteLast=142.07;
+let quote=quoteOpen;
+function renderQuote(v){
+  const d=v-quoteOpen, up=d>=0;
+  const pxEl=document.getElementById('px'), ch=document.getElementById('chg');
+  pxEl.textContent=v.toFixed(2);
+  pxEl.style.color=up?'var(--green)':'var(--red)';
+  ch.className='chg '+(up?'green':'red');
+  ch.textContent=(up?'▲ +':'▼ ')+Math.abs(d).toFixed(2)+' ('+(up?'+':'')+(d/quoteOpen*100).toFixed(2)+'%)';
+}
+const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if(reduceMotion){quote=quoteLast; renderQuote(quote);}
+else{
+  const t0=performance.now();
+  const ease=now=>{
+    const t=Math.min(1,(now-t0)/1100);
+    const k=1-Math.pow(1-t,3);
+    quote=quoteOpen+(quoteLast-quoteOpen)*k;
+    renderQuote(quote);
+    if(t<1) requestAnimationFrame(ease);
+  };
+  requestAnimationFrame(ease);
+  setInterval(()=>{
+    quote=Math.max(140.2, Math.min(144.4, quote+(Math.random()-0.42)*0.16));
+    renderQuote(quote);
+  },5000);
+}
+
 const fmt=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Toronto',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
 const dfmt=new Intl.DateTimeFormat('en-US',{timeZone:'America/Toronto',month:'short',day:'2-digit',year:'numeric'});
 function clock(){const n=new Date(); document.getElementById('clock').textContent=`TORONTO ${dfmt.format(n).toUpperCase()} ${fmt.format(n)} ET`;}
@@ -541,7 +670,7 @@ const views={
   ABOUT:'about',BIO:'about',
   CONTACT:'contact',MSG:'contact',EMAIL:'contact',
   HELP:'help','?':'help',
-  SKLL:'resume',SKILLS:'resume',
+  SKLL:'home',SKILLS:'home',
   RSRCH:'rsrch',RESEARCH:'rsrch'
 };
 const input=document.getElementById('cmd'), msg=document.getElementById('cmdmsg');
@@ -565,6 +694,7 @@ function show(v){
   document.getElementById('scr').textContent=v.toUpperCase();
   history.replaceState(null,'','#'+v);
   window.scrollTo(0,0);
+  if(v==='home') scheduleChart();
 }
 document.getElementById('cmdform').addEventListener('submit',e=>{e.preventDefault(); run(input.value); input.value='';});
 document.querySelectorAll('.fk').forEach(b=>b.addEventListener('click',()=>run(b.dataset.cmd)));
