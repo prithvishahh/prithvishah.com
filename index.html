@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prithvi Shah</title>
+<meta name="description" content="Prithvi Shah — Computing and Financial Management student at the University of Waterloo. Software, machine learning, and markets.">
+<meta name="author" content="Prithvi Shah">
+<meta name="theme-color" content="#000000">
+<link rel="canonical" href="https://prithvishah.com/">
+<meta property="og:title" content="Prithvi Shah">
+<meta property="og:description" content="Prithvi Shah — Computing and Financial Management student at the University of Waterloo. Software, machine learning, and markets.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://prithvishah.com/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Prithvi Shah">
+<meta name="twitter:description" content="Prithvi Shah — Computing and Financial Management student at the University of Waterloo. Software, machine learning, and markets.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#000; --panel:#050505; --line:#2a2a2a; --amber:#FB8B1E; --amber-d:#c46a10;
+  --txt:#e8e8e8; --dim:#8a8a8a; --green:#29d35b; --red:#ff433d; --cyan:#4af6ff;
+  --blue:#0068ff; --yellow:#ffd400; --sel:#1d1a12;
+  --mono:'IBM Plex Mono','JetBrains Mono',Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--txt);font-family:var(--mono);font-size:13px;line-height:1.35;height:100%}
+body{display:flex;flex-direction:column;min-height:100vh;overflow-x:hidden}
+::selection{background:var(--amber);color:#000}
+a{color:var(--cyan);text-decoration:none} a:hover{text-decoration:underline}
+.amber{color:var(--amber)} .green{color:var(--green)} .red{color:var(--red)} .cyan{color:var(--cyan)} .dim{color:var(--dim)} .yellow{color:var(--yellow)} .w{color:#fff}
+.b{font-weight:700}
+
+.fkeys{display:flex;gap:3px;padding:4px 6px;background:#111;border-bottom:1px solid var(--line);flex-wrap:wrap;align-items:center}
+.fk{background:var(--amber);color:#000;font-weight:700;font-size:12px;padding:3px 9px;border:none;font-family:var(--mono);cursor:pointer;letter-spacing:.3px}
+.fk:hover{background:#ffb35c}
+.fk.red{background:#c4161c;color:#fff} .fk.red:hover{background:#e12128}
+.fk.grn{background:#1f8a3a;color:#fff} .fk.grn:hover{background:#27a947}
+.fk.y{background:var(--yellow)}
+.fk .n{opacity:.6;margin-right:4px;font-weight:500}
+.fkeys .brand{margin-left:auto;color:var(--amber);font-weight:700;letter-spacing:2px;font-size:12px}
+.fkeys .brand span{color:#000;background:var(--amber-d);padding:1px 5px;margin-left:6px}
+
+.cmdrow{display:flex;align-items:center;gap:10px;padding:5px 8px;background:#000;border-bottom:1px solid var(--line)}
+.cmdrow .prompt{color:#000;background:var(--yellow);font-weight:700;padding:1px 6px}
+.cmdwrap{flex:1;display:flex;align-items:center;background:#0d0d0d;border:1px solid #333;padding:2px 6px}
+.cmdwrap:focus-within{border-color:var(--amber)}
+#cmd{flex:1;background:transparent;border:none;outline:none;color:var(--yellow);font-family:var(--mono);font-size:14px;font-weight:600;text-transform:uppercase;caret-color:var(--amber);letter-spacing:.5px}
+#cmd::placeholder{color:#5c5c5c;text-transform:none;font-weight:400}
+.go{background:#1f8a3a;color:#fff;border:none;font-family:var(--mono);font-weight:700;padding:2px 10px;cursor:pointer}
+.cmdrow .hint{color:var(--dim);font-size:11px;white-space:nowrap}
+.cmdrow .hint b{color:var(--amber)}
+#cmdmsg{color:var(--red);font-size:11px;min-width:160px}
+
+.ticker{background:#0a0a0a;border-bottom:1px solid var(--line);overflow:hidden;white-space:nowrap;height:22px;display:flex;align-items:center}
+.ticker .lbl{background:var(--red);color:#fff;font-weight:700;padding:0 8px;height:100%;display:flex;align-items:center;flex-shrink:0;z-index:2;font-size:12px}
+.ticker .track{display:inline-block;padding-left:12px;animation:scroll 90s linear infinite}
+.ticker:hover .track{animation-play-state:paused}
+.ticker .item{margin-right:46px;font-size:12px}
+.ticker .item .t{color:var(--amber);margin-right:6px}
+@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+main{flex:1;padding:6px;display:flex;flex-direction:column;gap:6px}
+.view{display:none;gap:6px} .view.active{display:grid;flex:1}
+#v-home{grid-template-columns:1.55fr 1fr;grid-template-rows:1fr auto}
+#v-home>.stack>.panel:first-child{flex:1}
+.panel{background:var(--panel);border:1px solid var(--line);display:flex;flex-direction:column;min-width:0}
+.ph{display:flex;align-items:center;gap:8px;background:#141414;border-bottom:1px solid var(--line);padding:3px 8px;font-size:12px}
+.ph .code{background:var(--amber);color:#000;font-weight:700;padding:0 5px}
+.ph .title{color:#fff;font-weight:600;letter-spacing:.4px}
+.ph .r{margin-left:auto;color:var(--dim);font-size:11px}
+.pb{padding:8px;flex:1}
+.watch{max-height:268px;overflow:auto}
+
+.eqhead{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:end;padding:8px 10px 6px;border-bottom:1px dashed #222}
+.sym{font-size:22px;font-weight:700;color:#fff;letter-spacing:1px}
+.sym small{font-size:13px;color:var(--amber);font-weight:600;margin-left:6px}
+.coname{color:var(--dim);font-size:12px}
+.px{font-size:30px;font-weight:700;color:var(--green);line-height:1}
+.chg{font-size:14px;font-weight:600}
+.arrow{display:inline-block}
+.qgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:0;border-bottom:1px solid #1a1a1a}
+.qgrid div{padding:5px 10px;border-right:1px solid #1a1a1a;font-size:12px}
+.qgrid div:last-child{border-right:none}
+.qgrid .k{color:var(--dim);font-size:10.5px;display:block;letter-spacing:.5px}
+.qgrid .v{color:#fff;font-weight:600;white-space:normal}
+.chartwrap{position:relative;padding:4px 8px 6px;flex:1;min-height:260px}
+#chart{position:absolute;inset:4px 8px 6px;width:calc(100% - 16px);height:calc(100% - 10px);display:block}
+.chartnote{color:#777;font-size:10.5px;padding:0 4px;border:1px solid #2a2a2a;margin-left:8px}
+.tabs{display:flex;gap:2px;padding:4px 8px 0}
+.tab{font-size:11px;padding:1px 7px;color:var(--dim);border:1px solid #333;background:none;font-family:var(--mono)}
+.tab.on{background:var(--amber);color:#000;border-color:var(--amber);font-weight:700}
+
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{color:var(--amber);text-align:left;font-weight:600;padding:3px 6px;border-bottom:1px solid #333;font-size:11px;letter-spacing:.4px;white-space:nowrap}
+td{padding:3px 6px;border-bottom:1px solid #141414;white-space:nowrap}
+tr:nth-child(even) td{background:#080808}
+tbody tr:hover td{background:var(--sel)}
+td.num,th.num{text-align:right}
+.tkr{color:#fff;font-weight:600}
+.bar{display:inline-block;height:7px;background:var(--amber);vertical-align:middle}
+.bar.g{background:var(--green)}
+tr.flash-up td{animation:fu .7s} tr.flash-dn td{animation:fd .7s}
+@keyframes fu{from{background:#0b4d1f}} @keyframes fd{from{background:#5a1010}}
+.pill{font-size:10px;padding:0 4px;border:1px solid;margin-left:4px}
+.news li{list-style:none;display:grid;grid-template-columns:44px 1fr auto;gap:8px;padding:3px 0;border-bottom:1px solid #141414;font-size:12px}
+.news .tm{color:var(--dim)} .news .src{color:var(--dim);font-size:10.5px}
+.news .hl{color:#fff} .news .hot{color:var(--red);font-weight:700;margin-right:4px}
+.stack{display:flex;flex-direction:column;gap:6px;min-width:0}
+.span2{grid-column:1 / -1}
+#v-proj{grid-template-rows:auto 1fr}
+#v-resume,#v-about,#v-contact,#v-help,#v-rsrch{grid-template-columns:1fr;align-content:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.two{display:grid;grid-template-columns:1.4fr 1fr;gap:6px}
+.kv{display:grid;grid-template-columns:170px 1fr;gap:3px 12px;font-size:12.5px}
+.kv dt{color:var(--amber)} .kv dd{color:#fff}
+.sec{color:var(--amber);font-weight:700;margin:10px 0 4px;border-bottom:1px solid #222;padding-bottom:2px;letter-spacing:.5px}
+.sec:first-child{margin-top:0}
+.desc{color:#cfcfcf;font-size:12.5px;max-width:900px}
+.ascii{color:var(--amber);font-size:11px;line-height:1.1;white-space:pre}
+.cmdlist td:first-child{color:var(--yellow);font-weight:700}
+.detail{border:1px solid #333;padding:10px;margin-top:6px;background:#070707}
+.detail h3{color:#fff;font-size:14px;margin-bottom:4px}
+.btnrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.cta{background:var(--amber);color:#000;padding:4px 10px;font-weight:700;font-size:12px;border:none;font-family:var(--mono);cursor:pointer;display:inline-block}
+.cta.o{background:none;color:var(--amber);border:1px solid var(--amber)}
+.cta:hover{filter:brightness(1.15);text-decoration:none}
+.bullets{margin:4px 0 0 16px;color:#cfcfcf;font-size:12.5px}
+.bullets li{margin:3px 0}
+.wrap{white-space:normal}
+.blink{animation:bl 1s steps(1) infinite} @keyframes bl{50%{opacity:0}}
+.status{display:flex;gap:14px;align-items:center;background:#111;border-top:1px solid var(--line);padding:3px 8px;font-size:11.5px;flex-wrap:wrap}
+.status .seg{color:var(--dim)} .status .seg b{color:#fff;font-weight:600}
+.status .live{color:var(--green)}
+.status .clock{margin-left:auto;color:var(--amber);font-weight:700}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:5px;box-shadow:0 0 6px var(--green);animation:bl 1.6s steps(1) infinite}
+@media (max-width:1100px){
+  #v-home,.two,.three{grid-template-columns:1fr}
+  .qgrid{grid-template-columns:repeat(3,1fr)}
+  .cmdrow .hint{display:none}
+  .pb{overflow-x:auto}
+}
+</style>
+</head>
+<body>
+
+<nav class="fkeys" aria-label="Function keys">
+  <button class="fk red" data-cmd="HELP"><span class="n">F1</span>&lt;HELP&gt;</button>
+  <button class="fk red" data-cmd="HOME"><span class="n">F2</span>&lt;MENU&gt;</button>
+  <button class="fk" data-cmd="PROJ"><span class="n">F3</span>PROJ</button>
+  <button class="fk" data-cmd="RESUME"><span class="n">F4</span>RESUME</button>
+  <button class="fk" data-cmd="ABOUT"><span class="n">F5</span>ABOUT</button>
+  <button class="fk" data-cmd="SKLL"><span class="n">F6</span>SKLL</button>
+  <button class="fk y" data-cmd="CONTACT"><span class="n">F7</span>CONTACT</button>
+  <button class="fk grn" data-cmd="HIRE"><span class="n">F8</span>&lt;HIRE&gt;</button>
+  <button class="fk" data-cmd="RSRCH"><span class="n">F9</span>RSRCH</button>
+  <div class="brand">PSHAH<span>CFM '29</span></div>
+</nav>
+
+<div class="cmdrow">
+  <span class="prompt">PSHAH&gt;</span>
+  <form class="cmdwrap" id="cmdform" autocomplete="off">
+    <input id="cmd" spellcheck="false" placeholder="Type a command, e.g. PROJ, then press Enter" aria-label="Terminal command">
+    <button class="go" type="submit">&lt;GO&gt;</button>
+  </form>
+  <span id="cmdmsg"></span>
+  <span class="hint">TRY <b>PROJ</b> · <b>RSRCH</b> · <b>RESUME</b> · <b>ABOUT</b> · <b>CONTACT</b> · <b>HELP</b></span>
+</div>
+
+<div class="ticker">
+  <div class="lbl">TOP NEWS</div>
+  <div style="overflow:hidden;flex:1">
+    <div class="track" id="track"></div>
+  </div>
+</div>
+
+<main>
+<section class="view active" id="v-home">
+  <div class="stack">
+    <div class="panel">
+      <div class="ph"><span class="code">1</span><span class="title">PSHAH US Equity</span><span class="dim">DES · GP</span><span class="r">Illustrative quote · not a security</span></div>
+      <div class="eqhead">
+        <div>
+          <div class="sym">PSHAH <small>US Equity</small></div>
+          <div class="coname">SHAH PRITHVI · UWATERLOO CFM '29 · SWE / ML</div>
+        </div>
+        <div style="text-align:right">
+          <span class="px" id="px">142.07</span>
+        </div>
+        <div>
+          <div class="chg green" id="chg"><span class="arrow">▲</span> +3.41 (+2.46%)</div>
+          <div class="dim" style="font-size:11px">SCREEN: <span class="green b">PORTFOLIO</span> · GRAD <span class="w">APR 2029</span></div>
+        </div>
+      </div>
+      <div class="qgrid">
+        <div><span class="k">SCHOOL</span><span class="v">WATERLOO</span></div>
+        <div><span class="k">PROGRAM</span><span class="v">CFM HONS</span></div>
+        <div><span class="k">GRAD</span><span class="v">APR 2029</span></div>
+        <div><span class="k">FOCUS</span><span class="v">SWE / ML</span></div>
+        <div><span class="k">LATEST</span><span class="v">SIDEKICK</span></div>
+        <div><span class="k">PAPER</span><span class="v" id="q-journal">—</span></div>
+      </div>
+      <div class="tabs">
+        <span class="tab on">1Y</span>
+        <span class="chartnote">ILLUSTRATIVE · JUST FOR FUN · NOT A REAL SECURITY</span>
+        <span class="dim" style="margin-left:auto;font-size:11px">GP · decorative price path</span>
+      </div>
+      <div class="chartwrap">
+        <canvas id="chart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="stack">
+    <div class="panel">
+      <div class="ph"><span class="code">2</span><span class="title">SKLL · Skills Watchlist</span><span class="r">DECORATIVE PX</span></div>
+      <div class="pb watch" style="padding:4px 4px 6px">
+        <table id="skills">
+          <thead><tr><th>TICKER</th><th>NAME</th><th class="num">LAST</th><th class="num">CHG</th><th class="num">%CHG</th><th>BAR</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="dim" style="font-size:10.5px;padding:4px 6px 0">Prices and changes are decorative. The names are the languages and tools from the resume.</div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><span class="code">3</span><span class="title">N · News</span><span class="r">PSHAH</span></div>
+      <div class="pb">
+        <ul class="news" id="news"></ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel span2">
+    <div class="ph"><span class="code">4</span><span class="title">PROJ · Portfolio Holdings</span><span class="dim">Type PROJ for full detail</span><span class="r" id="pos-count"></span></div>
+    <div class="pb" style="padding:4px">
+      <table id="projmini">
+        <thead><tr><th>SECURITY</th><th>DESCRIPTION</th><th>SECTOR</th><th>STACK</th><th>RESULT</th><th>STATUS</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="v-proj">
+  <div class="panel">
+    <div class="ph"><span class="code">PROJ</span><span class="title">Portfolio Holdings · Security Detail</span><span class="r">Click a row for DES</span></div>
+    <div class="pb">
+      <table id="projfull">
+        <thead><tr><th>#</th><th>SECURITY</th><th>DESCRIPTION</th><th>SECTOR</th><th>STACK</th><th>RESULT</th><th>STATUS</th><th>LINKS</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <div class="detail" id="projdetail"></div>
+    </div>
+  </div>
+  <div class="three">
+    <div class="panel">
+      <div class="ph"><span class="code">RES</span><span class="title">Measured Results</span><span class="r">FROM THE WRITEUPS</span></div>
+      <div class="pb" id="metrics"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><span class="code">TECH</span><span class="title">Stack Exposure</span><span class="r">THESE HOLDINGS</span></div>
+      <div class="pb">
+        <table id="stackexp"><thead><tr><th>TECH</th><th class="num">POSITIONS</th></tr></thead><tbody></tbody></table>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><span class="code">HLT</span><span class="title">Highlights</span><span class="r">2024 · 2026</span></div>
+      <div class="pb">
+        <ul class="news" id="highlights"></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="v-rsrch">
+  <div class="two">
+    <div class="panel">
+      <div class="ph"><span class="code">RSRCH</span><span class="title">Student Researcher · Chronic Kidney Disease</span><span class="r">TORONTO · JAN 2024 – JUN 2024</span></div>
+      <div class="pb" id="rsrch-body"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><span class="code">DES</span><span class="title">Publication Detail</span><span class="r" id="rsrch-journal-head"></span></div>
+      <div class="pb" id="rsrch-detail"></div>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="v-resume">
+  <div class="two">
+    <div class="panel">
+      <div class="ph"><span class="code">RESUME</span><span class="title">DES · Security Description</span><span class="r">SHAH PRITHVI</span></div>
+      <div class="pb">
+        <div class="sec">EDUCATION</div>
+        <table>
+          <thead><tr><th>INSTITUTION</th><th>PROGRAM</th><th>YEAR</th><th>LOCATION</th></tr></thead>
+          <tbody>
+            <tr><td class="tkr">University of Waterloo</td><td class="wrap">Bachelor of Computing and Financial Management (Honours Co-op)</td><td class="green">Expected Apr 2029</td><td>Waterloo, ON</td></tr>
+          </tbody>
+        </table>
+        <div class="sec">EXPERIENCE</div>
+        <table>
+          <thead><tr><th>DATE</th><th>ROLE</th><th>ORGANIZATION</th><th>LOCATION</th></tr></thead>
+          <tbody>
+            <tr><td class="amber">MAY 2026 – AUG 2026</td><td class="w">Software Engineer</td><td class="tkr">OpenText</td><td>Waterloo, ON</td></tr>
+            <tr><td class="amber">JAN 2024 – AUG 2026</td><td class="w">Co-Founder &amp; CTO</td><td class="tkr">Atrangi Eventz</td><td>Toronto, ON</td></tr>
+            <tr><td class="amber">JAN 2024 – JUN 2024</td><td class="w">Student Researcher</td><td class="tkr" id="resume-journal">—</td><td>Toronto, ON</td></tr>
+            <tr><td class="amber">NOV 2026</td><td class="w">Intern program · selected</td><td class="tkr">Sidekick (YC S26)</td><td class="dim">—</td></tr>
+          </tbody>
+        </table>
+        <div class="sec">OPENTEXT · SOFTWARE ENGINEER</div>
+        <ul class="bullets">
+          <li>Contributed to an internal AI orchestrator that automates incident triage, building workflows that correlate alerts, pull context from runbooks, and suggest resolution steps.</li>
+          <li>Monitored critical production systems across multiple global AWS data centers, resolving 99% of critical incidents before customer impact.</li>
+          <li>Triaged and debugged 50+ production incidents weekly within SLA (200+ over the term), across services, networking, and infrastructure.</li>
+          <li>Authored 20+ runbooks and KCS knowledge articles that fed the orchestrator’s suggestions and cut onboarding time for 24/7 operators.</li>
+        </ul>
+        <div class="sec">ATRANGI EVENTZ · CO-FOUNDER &amp; CTO</div>
+        <ul class="bullets">
+          <li>Co-founded an events company and built its full-stack ticketing platform, shipping to 1,000+ users and owning frontend, backend, database, deployment, and monitoring for 2.5+ years.</li>
+          <li>Designed the relational database for events, tickets, and orders so checkout stayed reliable and drops did not oversell.</li>
+          <li>Integrated Stripe so 100% of ticket sales were tied to a verified payment, and shipped features weekly from user feedback.</li>
+          <li>Generated $25K+ in annual revenue while leading a 50+-person team across operations and product.</li>
+        </ul>
+        <div class="sec">RESEARCH · CHRONIC KIDNEY DISEASE</div>
+        <ul class="bullets" id="resume-research"></ul>
+        <div class="sec">HIGHLIGHT</div>
+        <p class="desc">Selected for the Sidekick (YC S26) intern program in November 2026.</p>
+        <div class="btnrow">
+          <a class="cta" href="/resume.pdf">DOWNLOAD RESUME.PDF</a>
+          <a class="cta o" href="mailto:prithvi.shah@uwaterloo.ca">EMAIL</a>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><span class="code">SKLL</span><span class="title">Technical Skills</span><span class="r">RESUME</span></div>
+      <div class="pb">
+        <div class="sec">LANGUAGES</div>
+        <p class="desc">Python, C++, Java, JavaScript, TypeScript, C, Go, SQL, Rust</p>
+        <div class="sec">TECHNOLOGIES</div>
+        <p class="desc">React, Next.js, Node.js, FastAPI, REST APIs, PostgreSQL, AWS, Docker, Linux, Git, CI/CD</p>
+        <div class="sec">PRACTICES</div>
+        <p class="desc">Agile Scrum, IoT and telemetry data, cloud services, LLM agents, incident management, KCS</p>
+        <div class="sec">FOCUS</div>
+        <p class="desc">Software engineering, machine learning, and markets. Computing and Financial Management, Honours Co-op, class of 2029.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="v-about">
+  <div class="two">
+    <div class="panel">
+      <div class="ph"><span class="code">ABOUT</span><span class="title">BIO · Executive Profile</span><span class="r">SHAH PRITHVI</span></div>
+      <div class="pb">
+<div class="ascii">  ____  ____  _   _    _    _   _
+ |  _ \/ ___|| | | |  / \  | | | |
+ | |_) \___ \| |_| | / _ \ | |_| |
+ |  __/ ___) |  _  |/ ___ \|  _  |
+ |_|   |____/|_| |_/_/   \_\_| |_|   CFM '29</div>
+        <div class="sec" style="margin-top:12px">PROFILE</div>
+        <p class="desc">Prithvi Shah is a Computing and Financial Management (Honours Co-op) student at the University of Waterloo, expected April 2029. He works at the intersection of software and markets. From May to August 2026 he was a software engineer at OpenText, contributing to an internal AI orchestrator for incident triage. From January 2024 to August 2026 he was co-founder and CTO of Atrangi Eventz, which ran a ticketing platform for 1,000+ users and generated $25K+ in annual revenue. In 2024 he was a student researcher on machine-learning work on chronic kidney disease gene expression.</p>
+        <p class="desc" style="margin-top:8px">In November 2026 he was selected for the Sidekick (YC S26) intern program.</p>
+        <div class="sec">KEY DATA</div>
+        <dl class="kv">
+          <dt>NAME</dt><dd>Prithvi Shah</dd>
+          <dt>SCHOOL</dt><dd>University of Waterloo</dd>
+          <dt>PROGRAM</dt><dd>Computing and Financial Management (Honours Co-op)</dd>
+          <dt>GRAD</dt><dd>Expected April 2029</dd>
+          <dt>FOCUS</dt><dd>Software engineering · machine learning · markets</dd>
+          <dt>OPENTEXT</dt><dd>Software Engineer · May 2026 – Aug 2026 · Waterloo, ON</dd>
+          <dt>ATRANGI</dt><dd>Co-Founder &amp; CTO · Jan 2024 – Aug 2026 · Toronto, ON</dd>
+          <dt>RESEARCH</dt><dd id="about-research">—</dd>
+          <dt>SIDEKICK</dt><dd class="green">Intern program · selected Nov 2026</dd>
+        </dl>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><span class="code">PUB</span><span class="title">Publication</span><span class="r" id="about-journal-head"></span></div>
+      <div class="pb" id="about-pub"></div>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="v-contact">
+  <div class="two">
+    <div class="panel">
+      <div class="ph"><span class="code">MSG</span><span class="title">Contact</span><span class="r">WATERLOO / TORONTO</span></div>
+      <div class="pb">
+        <dl class="kv" style="font-size:14px;gap:8px 14px">
+          <dt>EMAIL</dt><dd><a href="mailto:prithvi.shah@uwaterloo.ca">prithvi.shah@uwaterloo.ca</a></dd>
+          <dt>LINKEDIN</dt><dd><a href="https://linkedin.com/in/prithvishah1" target="_blank" rel="noopener noreferrer">linkedin.com/in/prithvishah1</a></dd>
+          <dt>GITHUB</dt><dd><a href="https://github.com/prithvishahh" target="_blank" rel="noopener noreferrer">github.com/prithvishahh</a></dd>
+          <dt>RESUME</dt><dd><a href="/resume.pdf">resume.pdf</a></dd>
+          <dt>LOCATION</dt><dd>Waterloo / Toronto, ON</dd>
+          <dt>SCHOOL</dt><dd>University of Waterloo · CFM '29</dd>
+        </dl>
+        <div class="btnrow" style="margin-top:16px">
+          <a class="cta" href="mailto:prithvi.shah@uwaterloo.ca">EMAIL</a>
+          <a class="cta o" href="https://linkedin.com/in/prithvishah1" target="_blank" rel="noopener noreferrer">LINKEDIN</a>
+          <a class="cta o" href="https://github.com/prithvishahh" target="_blank" rel="noopener noreferrer">GITHUB</a>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><span class="code">ORD</span><span class="title">Order Ticket</span><span class="r">PSHAH</span></div>
+      <div class="pb">
+        <table>
+          <tbody>
+            <tr><td class="amber">TO</td><td><a href="mailto:prithvi.shah@uwaterloo.ca">prithvi.shah@uwaterloo.ca</a></td></tr>
+            <tr><td class="amber">LINKEDIN</td><td><a href="https://linkedin.com/in/prithvishah1">/in/prithvishah1</a></td></tr>
+            <tr><td class="amber">GITHUB</td><td><a href="https://github.com/prithvishahh">/prithvishahh</a></td></tr>
+            <tr><td class="amber">RESUME</td><td><a href="/resume.pdf">/resume.pdf</a></td></tr>
+            <tr><td class="amber">FOCUS</td><td>Software · ML · markets</td></tr>
+          </tbody>
+        </table>
+        <div class="btnrow"><a class="cta" style="background:var(--green);color:#000" href="mailto:prithvi.shah@uwaterloo.ca">SEND</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="v-help">
+  <div class="panel">
+    <div class="ph"><span class="code">HELP</span><span class="title">Command Reference</span><span class="r">Type a mnemonic, then Enter</span></div>
+    <div class="pb">
+      <table class="cmdlist">
+        <thead><tr><th>COMMAND</th><th>FUNCTION</th><th>KEY</th></tr></thead>
+        <tbody>
+          <tr><td>HOME</td><td>Quote, chart, skills watchlist, news, project strip</td><td>F2</td></tr>
+          <tr><td>PROJ</td><td>Projects as portfolio holdings, with detail</td><td>F3</td></tr>
+          <tr><td>RSRCH</td><td>Chronic kidney disease research and the paper</td><td>F9 · also RESEARCH</td></tr>
+          <tr><td>RESUME</td><td>Education, experience, skills</td><td>F4 · also DES, CV</td></tr>
+          <tr><td>ABOUT</td><td>Bio and key data</td><td>F5 · also BIO</td></tr>
+          <tr><td>SKLL</td><td>Jump to the skills watchlist</td><td>F6</td></tr>
+          <tr><td>CONTACT</td><td>Email, LinkedIn, GitHub, resume</td><td>F7 · also MSG</td></tr>
+          <tr><td>HIRE</td><td>Opens an email</td><td>F8</td></tr>
+          <tr><td>CLEAR</td><td>Back to home</td><td>ESC</td></tr>
+          <tr><td>HELP</td><td>This screen</td><td>F1</td></tr>
+        </tbody>
+      </table>
+      <p class="dim" style="margin-top:10px;font-size:11.5px">Press <span class="amber">/</span> to focus the command line. A trailing GO is optional. The quote and the skill prices are decorative.</p>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="status">
+  <span class="seg"><span class="dot"></span><span class="live">CONNECTED</span></span>
+  <span class="seg">USER <b>GUEST</b></span>
+  <span class="seg">SCREEN <b id="scr">HOME</b></span>
+  <span class="seg">SCHOOL <b class="green">WATERLOO CFM '29</b></span>
+  <span class="seg">LAT <b id="lat">12</b>ms</span>
+  <span class="seg">© Prithvi Shah · not affiliated with any terminal vendor</span>
+  <span class="clock" id="clock">--:--:-- ET</span>
+</footer>
+
+<script>
+/* Journal name lives only in this constant. */
+const JOURNAL = 'Frontiers in Genetics';
+const PAPER_URL = 'https://www.frontiersin.org/journals/genetics/articles/10.3389/fgene.2024.1409755/full';
+const PAPER_DOI = '10.3389/fgene.2024.1409755';
+const PAPER_TITLE = 'Development and evaluation of a chronic kidney disease risk prediction model using random forest';
+const MAIL = 'mailto:prithvi.shah@uwaterloo.ca';
+
+const headlines = [
+  ['OTX','OPENTEXT: AI ORCHESTRATOR CORRELATES ALERTS, READS RUNBOOKS, AND SUGGESTS A FIX'],
+  ['OTX','200+ PRODUCTION INCIDENTS TRIAGED AT OPENTEXT · 99% OF CRITICAL ONES BEFORE CUSTOMER IMPACT'],
+  ['REV','ATRANGI EVENTZ: $25K+ ANNUAL REVENUE · 1,000+ USERS ON THE TICKETING PLATFORM'],
+  ['MKT','TICKSTORE PACKS A 3M-ROW SESSION INTO 17.3 MIB · 8× SMALLER THAN CSV'],
+  ['PUB','CKD GENE-EXPRESSION CLASSIFIER PUBLISHED IN ' + JOURNAL + ' · 94.59% VALIDATION ACCURACY'],
+  ['YC','SELECTED FOR THE SIDEKICK (YC S26) INTERN PROGRAM · NOV 2026'],
+  ['PAY','PRICING GUARD: 6 STRIPE RULES · ALL 10 PLANTED ERRORS CAUGHT · NO FALSE POSITIVES'],
+  ['TTC','DEADZONE: NVIDIA HACKATHON GRAPH OF TORONTO TTC ACCESS GAPS'],
+  ['EDU',"WATERLOO BACHELOR OF CFM, HONOURS CO-OP · CLASS OF '29"],
+  ['NOTE','PSHAH US IS A FICTIONAL TICKER · THE CHART IS NOT A SECURITY']
+];
+
+const skills = [
+  ['PY','Python',91.2],['CPP','C++',84.4],['JAVA','Java',80.1],['JS','JavaScript',86.5],
+  ['TS','TypeScript',88.7],['C','C',76.3],['GO','Go',83.9],['SQL','SQL',82.4],['RST','Rust',90.6],
+  ['REACT','React',86.1],['NEXT','Next.js',85.4],['NODE','Node.js',84.0],['FAST','FastAPI',87.2],
+  ['REST','REST APIs',86.8],['PG','PostgreSQL',83.5],['AWS','AWS',81.7],['DOCK','Docker',80.9],
+  ['LNX','Linux',84.8],['GIT','Git',90.3],['CICD','CI/CD',79.5]
+];
+
+const projects = [
+  {
+    name:'TICKSTORE',
+    blurb:'Columnar engine for trade and quote ticks',
+    sector:'Market Data',
+    stack:'Rust · Python · Parquet · DuckDB',
+    result:'17.3 MiB · 8× vs CSV',
+    status:'OSS',
+    pill:'green',
+    url:'https://github.com/prithvishahh/TickStore',
+    lead:'A Rust columnar storage engine for trade and quote ticks, with adaptive per-column encodings, min/max chunk pruning, and a write-ahead log that recovers from a crash without losing or duplicating rows.',
+    points:[
+      'Packed a 3M-row session into 17.3 MiB, 8× smaller than CSV and 15% smaller than Parquet zstd (20.5 MiB).',
+      'Session VWAP in 1.26 ms and 10-minute as-of joins in 2.33 ms, versus 1.64 ms and 13.7 ms in DuckDB. Results were checksum-matched against the same aggregates.'
+    ]
+  },
+  {
+    name:'PRICING GUARD',
+    blurb:'Stripe pricing validator, 6 configurable rules',
+    sector:'FinTech',
+    stack:'Go · PostgreSQL · REST APIs · Docker',
+    result:'10/10 errors · 0 false positives',
+    status:'OSS',
+    pill:'green',
+    url:'https://github.com/prithvishahh/pricing-guard',
+    lead:'A backend that audits a merchant’s product catalog through the Stripe API and flags pricing mistakes before launch. Six rules are configurable.',
+    points:[
+      'Webhook handler verifies signatures and processes events idempotently, so a retry does not duplicate a result.',
+      'Table-driven tests: 100% coverage on the rules engine, 88% overall. A live sandbox run caught all 10 planted errors with no false positives.'
+    ]
+  },
+  {
+    name:'DEADZONE',
+    blurb:'TTC accessibility graph from an NVIDIA hackathon',
+    sector:'Transit',
+    stack:'TypeScript · Next.js · FastAPI · RAPIDS cuGraph',
+    result:'Working hackathon demo',
+    status:'DEMO',
+    pill:'yellow',
+    url:'https://github.com/prithvishahh/DeadZone',
+    lead:'Built at an NVIDIA hackathon. Models Toronto’s TTC GTFS network as a graph and runs GPU graph algorithms to map public-service access gaps after 9 PM.',
+    points:[
+      'Ingests TTC GTFS, 311 demand signals, and service locations. RAPIDS cuGraph on GPU, NetworkX when a GPU is not there.',
+      'A FastAPI backend feeds a TypeScript and Next.js animated heatmap. Data ingest, GPU compute, API, and frontend shipped as a working demo.'
+    ]
+  },
+  {
+    name:'DEEP HEDGING',
+    blurb:'PPO hedging under Heston vol and transaction costs',
+    sector:'Quant',
+    stack:'Python · PyTorch · Stable-Baselines3 · Gymnasium',
+    result:'PPO vs Black-Scholes',
+    status:'RESEARCH',
+    pill:'cyan',
+    url:'https://github.com/prithvishahh/deepHedging',
+    lead:'A Gymnasium environment for discrete hedging of a European call under Heston stochastic volatility and proportional transaction costs.',
+    points:[
+      'Trains a PPO agent in PyTorch through Stable-Baselines3 and compares its hedge with the Black-Scholes delta on the same paths.'
+    ]
+  }
+];
+
+function paperLink(extraClass){
+  const a=document.createElement('a');
+  a.className='cta'+(extraClass?(' '+extraClass):'');
+  a.href=PAPER_URL;
+  a.target='_blank';
+  a.rel='noopener noreferrer';
+  a.textContent='Read paper';
+  return a;
+}
+
+function fillPublication(){
+  document.getElementById('q-journal').textContent=JOURNAL;
+  document.getElementById('resume-journal').textContent=JOURNAL;
+  document.getElementById('rsrch-journal-head').textContent=JOURNAL;
+  document.getElementById('about-journal-head').textContent=JOURNAL;
+  document.getElementById('about-research').textContent='Student Researcher · Jan 2024 – Jun 2024 · '+JOURNAL;
+
+  const researchPts=[
+    'Built an ML classifier on clinical gene-expression data, reaching 94.59% validation accuracy through feature engineering and model selection (LASSO + random forest).',
+    'Identified 6 key genes linked to CKD and contributed to a peer-reviewed paper in '+JOURNAL+'.',
+    'Supported by $4K in microgrants and cited by external work.',
+    'DOI '+PAPER_DOI+'.'
+  ];
+  const resumeList=document.getElementById('resume-research');
+  researchPts.forEach(t=>{const li=document.createElement('li'); li.textContent=t; resumeList.appendChild(li);});
+  const resumeRow=document.createElement('li');
+  resumeRow.appendChild(paperLink());
+  resumeList.appendChild(resumeRow);
+
+  const body=document.getElementById('rsrch-body');
+  body.innerHTML='<p class="desc">Student researcher in Toronto, January 2024 – June 2024. The work is an ML classifier on clinical gene-expression data for chronic kidney disease.</p>';
+  const ul=document.createElement('ul'); ul.className='bullets';
+  researchPts.forEach(t=>{const li=document.createElement('li'); li.textContent=t; ul.appendChild(li);});
+  body.appendChild(ul);
+  const row=document.createElement('div'); row.className='btnrow'; row.appendChild(paperLink()); body.appendChild(row);
+
+  const detail=document.getElementById('rsrch-detail');
+  const h=document.createElement('h3'); h.textContent=PAPER_TITLE; detail.appendChild(h);
+  const dl=document.createElement('dl'); dl.className='kv'; dl.style.marginTop='8px';
+  const fields=[['JOURNAL',JOURNAL],['DOI',PAPER_DOI],['ROLE','Student Researcher'],['DATES','Jan 2024 – Jun 2024'],['WHERE','Toronto, ON'],['ACCURACY','94.59% validation'],['METHOD','LASSO + random forest'],['GENES','6 key genes linked to CKD'],['SUPPORT','$4K in microgrants'],['CITED','Cited by external work']];
+  fields.forEach(([k,v])=>{
+    const dt=document.createElement('dt'); dt.textContent=k;
+    const dd=document.createElement('dd'); dd.textContent=v;
+    dl.appendChild(dt); dl.appendChild(dd);
+  });
+  detail.appendChild(dl);
+  const drow=document.createElement('div'); drow.className='btnrow'; drow.appendChild(paperLink()); detail.appendChild(drow);
+
+  const about=document.getElementById('about-pub');
+  const ah=document.createElement('h3'); ah.textContent=PAPER_TITLE; about.appendChild(ah);
+  const ap=document.createElement('p'); ap.className='desc'; ap.style.marginTop='8px';
+  ap.textContent='Peer-reviewed paper in '+JOURNAL+' (DOI '+PAPER_DOI+'). Gene-expression classifier for CKD, 94.59% validation accuracy, LASSO + random forest, 6 key genes. $4K in microgrants. Cited by external work.';
+  about.appendChild(ap);
+  const arow=document.createElement('div'); arow.className='btnrow'; arow.appendChild(paperLink()); about.appendChild(arow);
+
+  const hi=document.getElementById('highlights');
+  const items=[
+    ['NOV','Selected for the Sidekick (YC S26) intern program'],
+    ['2024','CKD classifier in '+JOURNAL+' · 94.59% validation accuracy']
+  ];
+  items.forEach(([tm,hl])=>{
+    const li=document.createElement('li');
+    li.innerHTML='<span class="tm"></span><span class="hl"></span><span class="src">HLT</span>';
+    li.querySelector('.tm').textContent=tm;
+    li.querySelector('.hl').textContent=hl;
+    hi.appendChild(li);
+  });
+  const linkLi=document.createElement('li');
+  linkLi.style.display='block';
+  linkLi.style.paddingTop='8px';
+  linkLi.appendChild(paperLink());
+  hi.appendChild(linkLi);
+}
+
+const track=document.getElementById('track');
+track.innerHTML=[...headlines,...headlines].map(([t,h])=>`<span class="item"><span class="t">■ ${t}</span>${h}</span>`).join('');
+const newsTimes=['23:41','22:07','19:30','16:02','13:15','09:58','08:14','06:40'];
+document.getElementById('news').innerHTML=headlines.slice(0,8).map(([t,h],i)=>
+  `<li><span class="tm">${newsTimes[i]}</span><span class="hl">${i===0?'<span class="hot">*</span>':''}${h}</span><span class="src">${t}</span></li>`).join('');
+
+const sbody=document.querySelector('#skills tbody');
+function renderSkills(){
+  sbody.innerHTML=skills.map(([t,n,p],i)=>{
+    const c=(Math.random()*2.4-0.6), pct=c/p*100, up=c>=0, cls=up?'green':'red';
+    const w=Math.round(p*0.7);
+    return `<tr data-i="${i}"><td class="tkr">${t}</td><td>${n}</td><td class="num w">${p.toFixed(2)}</td>
+      <td class="num ${cls}">${up?'+':''}${c.toFixed(2)}</td><td class="num ${cls}">${up?'▲':'▼'} ${Math.abs(pct).toFixed(2)}%</td>
+      <td><span class="bar ${p>85?'g':''}" style="width:${w}px"></span></td></tr>`;
+  }).join('');
+}
+renderSkills();
+setInterval(()=>{
+  const rows=sbody.querySelectorAll('tr');
+  if(!rows.length) return;
+  const i=Math.floor(Math.random()*rows.length);
+  const r=rows[i]; const s=skills[i]; const c=(Math.random()*2.4-0.7);
+  s[2]=Math.max(50,Math.min(99.9,s[2]+c*0.15));
+  const up=c>=0, cls=up?'green':'red', pct=c/s[2]*100;
+  r.children[2].textContent=s[2].toFixed(2);
+  r.children[3].className='num '+cls; r.children[3].textContent=(up?'+':'')+c.toFixed(2);
+  r.children[4].className='num '+cls; r.children[4].textContent=(up?'▲ ':'▼ ')+Math.abs(pct).toFixed(2)+'%';
+  r.classList.remove('flash-up','flash-dn'); void r.offsetWidth; r.classList.add(up?'flash-up':'flash-dn');
+},900);
+
+function linkCell(url){
+  if(!url) return '<span class="dim">—</span>';
+  return `<a href="${url}" target="_blank" rel="noopener noreferrer">GitHub</a>`;
+}
+document.getElementById('pos-count').textContent=projects.length+' POSITIONS';
+document.querySelector('#projmini tbody').innerHTML=projects.map(p=>
+  `<tr><td class="tkr">${p.name}</td><td class="dim wrap">${p.blurb}</td><td>${p.sector}</td><td class="cyan">${p.stack}</td>
+  <td>${p.result}</td><td><span class="pill ${p.pill}">${p.status}</span></td></tr>`).join('');
+const pf=document.querySelector('#projfull tbody');
+pf.innerHTML=projects.map((p,i)=>
+  `<tr data-i="${i}" style="cursor:pointer"><td class="amber">${i+1})</td><td class="tkr">${p.name}</td><td class="dim wrap">${p.blurb}</td><td>${p.sector}</td><td class="cyan">${p.stack}</td>
+  <td class="wrap">${p.result}</td><td><span class="pill ${p.pill}">${p.status}</span></td>
+  <td>${linkCell(p.url)}</td></tr>`).join('');
+function showProj(i){
+  const p=projects[i]; if(!p) return;
+  pf.querySelectorAll('tr').forEach(r=>r.style.outline='');
+  const row=pf.querySelector(`tr[data-i="${i}"]`);
+  if(row) row.style.outline='1px solid var(--amber)';
+  const box=document.getElementById('projdetail');
+  box.innerHTML=`
+    <div class="ph" style="margin:-10px -10px 8px"><span class="code">DES</span><span class="title">${p.name}</span><span class="r">${p.sector} · ${p.status}</span></div>
+    <h3>${p.name}</h3>
+    <p class="desc">${p.lead}</p>
+    <ul class="bullets">${p.points.map(t=>`<li>${t}</li>`).join('')}</ul>
+    <dl class="kv" style="margin-top:8px"><dt>SECTOR</dt><dd>${p.sector}</dd><dt>STACK</dt><dd class="cyan">${p.stack}</dd><dt>STATUS</dt><dd>${p.status}</dd></dl>`;
+  const brow=document.createElement('div'); brow.className='btnrow';
+  if(p.url){
+    const a=document.createElement('a'); a.className='cta'; a.href=p.url; a.target='_blank'; a.rel='noopener noreferrer'; a.textContent='GitHub';
+    brow.appendChild(a);
+  }
+  box.appendChild(brow);
+}
+pf.addEventListener('click',e=>{
+  if(e.target.closest('a')) return;
+  const r=e.target.closest('tr'); if(r&&r.dataset.i!=null) showProj(+r.dataset.i);
+});
+showProj(0);
+
+const metrics=document.getElementById('metrics');
+metrics.innerHTML='<table><tbody>'+projects.filter(p=>p.name==='TICKSTORE'||p.name==='PRICING GUARD').map(p=>
+  `<tr><td class="tkr">${p.name}</td><td class="wrap">${p.result}</td></tr>`).join('')+
+  `<tr><td class="tkr">TICKSTORE</td><td class="wrap">VWAP 1.26 ms vs DuckDB 1.64 ms · as-of 2.33 ms vs 13.7 ms</td></tr>
+   <tr><td class="tkr">PRICING GUARD</td><td class="wrap">100% rules-engine coverage · 88% overall · 6 rules</td></tr>
+   </tbody></table>`;
+
+const counts=new Map();
+projects.forEach(p=>p.stack.split('·').map(s=>s.trim()).filter(Boolean).forEach(t=>counts.set(t,(counts.get(t)||0)+1)));
+document.querySelector('#stackexp tbody').innerHTML=[...counts.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))
+  .map(([t,n])=>`<tr><td class="cyan">${t}</td><td class="num">${n}</td></tr>`).join('');
+
+const cv=document.getElementById('chart'), ctx=cv.getContext('2d');
+let series=[];
+{let v=88; for(let i=0;i<260;i++){v+=(Math.random()-0.43)*1.6+(i>200?0.35:0); if(i===215)v+=9; series.push(v);} }
+const events=[{i:215,label:'SIDEKICK (YC S26)'}];
+function drawChart(){
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+  if(W<20||H<20) return;
+  cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,W,H);
+  const padL=8,padR=56,padT=12,padB=20, cw=W-padL-padR, ch=H-padT-padB;
+  const min=Math.min(...series)-3, max=Math.max(...series)+3;
+  const X=i=>padL+i/(series.length-1)*cw, Y=v=>padT+(1-(v-min)/(max-min))*ch;
+  ctx.strokeStyle='#1c1c1c'; ctx.lineWidth=1; ctx.font='10.5px IBM Plex Mono, monospace'; ctx.fillStyle='#777';
+  for(let g=0;g<=5;g++){const y=padT+g/5*ch; ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+cw,y); ctx.stroke();
+    ctx.fillText((max-g/5*(max-min)).toFixed(2),padL+cw+6,y+3);}
+  const months=['DEC','JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV'];
+  months.forEach((m,k)=>{const x=padL+(k+0.5)/12*cw; ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+ch); ctx.stroke(); ctx.fillText(m,x-9,H-5);});
+  const grad=ctx.createLinearGradient(0,padT,0,padT+ch); grad.addColorStop(0,'rgba(251,139,30,.35)'); grad.addColorStop(1,'rgba(251,139,30,0)');
+  ctx.beginPath(); ctx.moveTo(X(0),Y(series[0])); series.forEach((v,i)=>ctx.lineTo(X(i),Y(v)));
+  ctx.lineTo(X(series.length-1),padT+ch); ctx.lineTo(X(0),padT+ch); ctx.closePath(); ctx.fillStyle=grad; ctx.fill();
+  ctx.beginPath(); series.forEach((v,i)=>i?ctx.lineTo(X(i),Y(v)):ctx.moveTo(X(i),Y(v)));
+  ctx.strokeStyle='#FB8B1E'; ctx.lineWidth=1.6; ctx.stroke();
+  ctx.beginPath();
+  for(let i=20;i<series.length;i++){const a=series.slice(i-20,i).reduce((s,x)=>s+x,0)/20; i===20?ctx.moveTo(X(i),Y(a)):ctx.lineTo(X(i),Y(a));}
+  ctx.strokeStyle='rgba(74,246,255,.7)'; ctx.lineWidth=1; ctx.setLineDash([3,3]); ctx.stroke(); ctx.setLineDash([]);
+  events.forEach(e=>{
+    if(e.i<0||e.i>=series.length) return;
+    const x=X(e.i), y=Y(series[e.i]);
+    ctx.strokeStyle='#29d35b'; ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+ch); ctx.stroke();
+    ctx.fillStyle='#29d35b'; ctx.fillRect(x-62,padT+2,124,15); ctx.fillStyle='#000'; ctx.font='bold 10px IBM Plex Mono, monospace'; ctx.fillText('▲ '+e.label,x-58,padT+13);
+  });
+  const last=series[series.length-1], ly=Y(last);
+  ctx.strokeStyle='rgba(251,139,30,.5)'; ctx.setLineDash([2,2]); ctx.beginPath(); ctx.moveTo(padL,ly); ctx.lineTo(padL+cw,ly); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle='#FB8B1E'; ctx.fillRect(padL+cw+1,ly-8,padR-2,16); ctx.fillStyle='#000'; ctx.font='bold 11px IBM Plex Mono, monospace'; ctx.fillText(last.toFixed(2),padL+cw+5,ly+4);
+  ctx.beginPath(); ctx.arc(X(series.length-1),ly,3,0,7); ctx.fillStyle='#fff'; ctx.fill();
+  ctx.font='10.5px IBM Plex Mono, monospace'; ctx.fillStyle='#FB8B1E'; ctx.fillText('— PSHAH LAST',padL+6,padT+12);
+  ctx.fillStyle='#4af6ff'; ctx.fillText('--- 20D MAVG',padL+110,padT+12);
+}
+function scheduleChart(){
+  let n=0;
+  const step=()=>{
+    if(!document.getElementById('v-home').classList.contains('active')) return;
+    if((cv.clientWidth<20||cv.clientHeight<20) && n++<40){ requestAnimationFrame(step); return; }
+    drawChart();
+  };
+  requestAnimationFrame(step);
+}
+const anchor=series[series.length-1]; const open=138.66; let hi=142.9, vol=1.21;
+function tick(){
+  const last=series[series.length-1];
+  const nv=last+(Math.random()-0.5)*0.9+(anchor-last)*0.04;
+  series.push(nv); series.shift();
+  events.forEach(e=>{e.i-=1;});
+  const px=open+3.4+(nv-anchor)*0.6;
+  const d=px-open, up=d>=0;
+  document.getElementById('px').textContent=px.toFixed(2);
+  document.getElementById('px').style.color=up?'var(--green)':'var(--red)';
+  const ch=document.getElementById('chg'); ch.className='chg '+(up?'green':'red');
+  ch.innerHTML=`<span class="arrow">${up?'▲':'▼'}</span> ${up?'+':''}${d.toFixed(2)} (${up?'+':''}${(d/open*100).toFixed(2)}%)`;
+  if(px>hi){hi=px; }
+  vol+=Math.random()*0.01;
+  document.getElementById('lat').textContent=8+Math.floor(Math.random()*9);
+  if(document.getElementById('v-home').classList.contains('active')) drawChart();
+}
+window.addEventListener('resize',drawChart);
+document.fonts?.ready.then(scheduleChart);
+scheduleChart();
+tick();
+setInterval(tick,1200);
+
+const fmt=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Toronto',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+const dfmt=new Intl.DateTimeFormat('en-US',{timeZone:'America/Toronto',month:'short',day:'2-digit',year:'numeric'});
+function clock(){const n=new Date(); document.getElementById('clock').textContent=`TORONTO ${dfmt.format(n).toUpperCase()} ${fmt.format(n)} ET`;}
+clock(); setInterval(clock,1000);
+
+const views={
+  HOME:'home',MENU:'home',CLEAR:'home',
+  PROJ:'proj',PROJECTS:'proj',PORT:'proj',
+  RESUME:'resume',DES:'resume',CV:'resume',
+  ABOUT:'about',BIO:'about',
+  CONTACT:'contact',MSG:'contact',EMAIL:'contact',
+  HELP:'help','?':'help',
+  SKLL:'home',SKILLS:'home',
+  RSRCH:'rsrch',RESEARCH:'rsrch'
+};
+const input=document.getElementById('cmd'), msg=document.getElementById('cmdmsg');
+function run(raw){
+  const c=raw.toUpperCase().replace(/<?\s*GO\s*>?$/,'').replace(/[<>]/g,'').trim();
+  msg.textContent='';
+  if(!c) return;
+  if(c==='HIRE'){location.href=MAIL; show('contact'); return;}
+  const v=views[c];
+  if(!v){msg.textContent='UNKNOWN: '+c+' · TRY HELP'; return;}
+  show(v);
+  if(c==='SKLL'||c==='SKILLS'){
+    const t=document.getElementById('skills');
+    t.scrollIntoView({behavior:'smooth',block:'center'});
+    const panel=t.closest('.panel');
+    panel.style.outline='1px solid var(--amber)';
+    setTimeout(()=>{panel.style.outline='';},1500);
+  }
+}
+function show(v){
+  document.querySelectorAll('.view').forEach(s=>s.classList.toggle('active',s.id==='v-'+v));
+  document.getElementById('scr').textContent=v.toUpperCase();
+  history.replaceState(null,'','#'+v);
+  if(v==='home') scheduleChart();
+}
+document.getElementById('cmdform').addEventListener('submit',e=>{e.preventDefault(); run(input.value); input.value='';});
+document.querySelectorAll('.fk').forEach(b=>b.addEventListener('click',()=>run(b.dataset.cmd)));
+document.addEventListener('keydown',e=>{
+  if(e.key==='/'&&document.activeElement!==input){e.preventDefault(); input.focus();}
+  if(e.key==='Escape'){show('home'); input.blur();}
+  const fmap={F1:'HELP',F2:'HOME',F3:'PROJ',F4:'RESUME',F5:'ABOUT',F6:'SKLL',F7:'CONTACT',F8:'HIRE',F9:'RSRCH'};
+  if(fmap[e.key]){e.preventDefault(); run(fmap[e.key]);}
+});
+fillPublication();
+const h=location.hash.slice(1).toUpperCase();
+if(h&&views[h]) show(views[h]);
+</script>
+</body>
+</html>
