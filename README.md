@@ -1,6 +1,6 @@
 # prithvishah.com
 
-Personal site for Prithvi Shah. It is one static page, styled like a market terminal: a command line, a quote header, and panels for projects, research, resume, and contact.
+Personal site for Prithvi Shah. It is one static page, styled like a market terminal: a command line, function keys, and screens for projects, research, resume, and contact.
 
 Type a mnemonic and press Enter. `PROJ`, `RSRCH`, `RESUME`, `ABOUT`, `CONTACT`, `HELP`, and `HIRE` switch screens. Function keys F1–F9 do the same.
 
